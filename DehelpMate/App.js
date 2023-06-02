@@ -11,7 +11,7 @@ export default function App() {
   const [isConnected, setIsConnected] = useState(true);
 
 
-  const initialPageUri = 'https://example.com';
+  const initialPageUri = 'https://dehelpmate.com.ng/home/';
   const cachedPagePath = `${FileSystem.cacheDirectory}cachedPage.html`;
 
   useEffect(() => {
@@ -78,8 +78,8 @@ export default function App() {
      {!isConnected ? (
         <ErrorPage onRefresh={handleRefresh} />
       ) : ( <WebView
-      
-      source={{ uri: 'https://dehelpmate.com.ng/home/' }}
+      onError={handleWebViewError}
+      source={ isConnected ? { uri: initialPageUri } : {uri : cachedPagePath}}
       ref={webViewRef}
       onNavigationStateChange={onNavigationStateChange}
       onLoadStart={() => setIsLoading(true)}
@@ -114,4 +114,24 @@ const styles = StyleSheet.create({
      justifyContent: 'center',
      backgroundColor: '#fffff',
   },
+  errorContainer:{
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center',
+
+  },
+  refreshButton:{
+    backgroundColor:'blue',
+    paddingHorizontal: 20,
+    paddingVertical:10,
+    borderRadius:5
+  },
+  errorText:{
+    fontSize:20,
+    marginBottom:20
+  },
+  refreshButtonText:{
+    color:'white',
+    fontSize:16
+  }
 });
