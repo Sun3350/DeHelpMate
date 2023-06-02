@@ -1,53 +1,19 @@
 import  React,{useEffect, useState, useRef} from 'react';
 import { WebView } from 'react-native-webview';
-import {ActivityIndicator, BackHandler, StyleSheet, Text, View } from 'react-native';
+import {ActivityIndicator, BackHandler, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import * as FileSystem from 'expo-file-system';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [canGoBack, setCanGoBack] = useState(false);
   const webViewRef = useRef(null);
-  const [isConnected, setIsConnected] = useState(true);
-
-
-  const initialPageUri = 'https://dehelpmate.com.ng/home/';
-  const cachedPagePath = `${FileSystem.cacheDirectory}cachedPage.html`;
-
+  const [isConnected, setIsConnected] = useState(false);
+  
   useEffect(() => {
-    cacheInitialPage();
-    checkNetworkConnectivity();
-  }, []);
-
-  const cacheInitialPage = async () => {
-    const { exists } = await FileSystem.getInfoAsync(cachedPagePath);
-    if (!exists) {
-      const { uri: downloadedUri } = await FileSystem.downloadAsync(
-        initialPageUri,
-        cachedPagePath
-      );
-      console.log('Page cached:', downloadedUri);
-    }
-  };
-
-  const checkNetworkConnectivity = () => {
     NetInfo.fetch().then((state) => {
-      setIsConnected(state.isConnected);
+      setOffline(!state.isConnected);
     });
-  };
-
-  const handleWebViewError = () => {
-    setIsConnected(false);
-  };
-
-  const handleRefresh = () => {
-    setIsConnected(true);
-    webViewRef.current.reload();
-  };
-
-
-
-
+  }, []);
 
   const onNavigationStateChange = async (navState) => {
 
@@ -76,10 +42,20 @@ export default function App() {
     <View style={styles.container}>
      {isLoading && <ActivityIndicator style={styles.containers} size="large" color="blue" animating={true}/>}
      {!isConnected ? (
-        <ErrorPage onRefresh={handleRefresh} />
+       <View style={styles.errorContainer}>
+       <Text style={styles.errorText}>Network Error</Text>
+       <TouchableOpacity onPress={() => {
+              NetInfo.fetch().then((state) => {
+                setOffline(!state.isConnected);
+                webViewRef.current.reload();
+              });
+             }} style={styles.refreshButton}>
+         <Text style={styles.refreshButtonText}>Refresh</Text>
+       </TouchableOpacity>
+     </View>
       ) : ( <WebView
-      onError={handleWebViewError}
-      source={ isConnected ? { uri: initialPageUri } : {uri : cachedPagePath}}
+        onError={() => setIsConnected(true)} 
+      source={{ uri: 'https://dehelpmate.com.ng/home/'}}
       ref={webViewRef}
       onNavigationStateChange={onNavigationStateChange}
       onLoadStart={() => setIsLoading(true)}
@@ -88,16 +64,7 @@ export default function App() {
     </View>
   );
 }
-const ErrorPage = ({ onRefresh }) => {
-  return (
-    <View style={styles.errorContainer}>
-      <Text style={styles.errorText}>Network Error</Text>
-      <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
-        <Text style={styles.refreshButtonText}>Refresh</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
