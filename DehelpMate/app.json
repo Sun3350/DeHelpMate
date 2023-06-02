@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "DehelpMate",
+    "slug": "DehelpMate",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/deh-2.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/deh-1.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/deh-2.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.isaacayomide.DehelpMate"
+    },
+    "web": {
+      "favicon": "./assets/deh-2.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "906c5975-ca81-4dcb-ad9d-ad25ea4af8fc"
+      }
+    }
+  }
+}
